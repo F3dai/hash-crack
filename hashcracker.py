@@ -3,9 +3,18 @@ import sys
 import os
 import hashid # HashID py file
 
-hashtypes = ["MD5", "SHA-256", "SHA-1"]
+logo = """
+██╗░░██╗░█████╗░░██████╗██╗░░██╗░░░░░░░█████╗░██████╗░░█████╗░░█████╗░██╗░░██╗
+██║░░██║██╔══██╗██╔════╝██║░░██║░░░░░░██╔══██╗██╔══██╗██╔══██╗██╔══██╗██║░██╔╝
+███████║███████║╚█████╗░███████║█████╗██║░░╚═╝██████╔╝███████║██║░░╚═╝█████═╝░
+██╔══██║██╔══██║░╚═══██╗██╔══██║╚════╝██║░░██╗██╔══██╗██╔══██║██║░░██╗██╔═██╗░
+██║░░██║██║░░██║██████╔╝██║░░██║░░░░░░╚█████╔╝██║░░██║██║░░██║╚█████╔╝██║░╚██╗
+╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░╚═╝░░╚═╝░░░░░░░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝░╚════╝░╚═╝░░╚═╝
+"""
 
-# Have they provided 2 arguments 
+hashtypes = ["MD5", "SHA-256", "SHA-1", "SHA-512"]
+
+# Have they provided 2 arguments?
 def get_input():
     if len(sys.argv) == 3:
         wordlist = sys.argv[1]
@@ -22,7 +31,7 @@ def get_input():
 def validate(wordlist, password):
     hash_type = ""
     if os.path.isfile(wordlist) == False:
-        print("[!] ",wordlist, "Not Found, please use a valid path to a wordlist.")
+        print("\n[!] '"+wordlist+ "' Not Found, please use a valid path to a wordlist.\nUsage: python hashcracker.py [/wordlist/path] [password hash]")
         sys.exit()
 
 
@@ -65,8 +74,8 @@ def decrypt_algorithm(algorithm, item, wordlist): # Redirect to brute function
         decrypt_SHA256(item, wordlist)
     if algorithm == "SHA-1":
         decrypt_SHA1(item, wordlist)
-    if algorithm == "SHA-251":
-        decrypt_SHA251(item, wordlist)
+    if algorithm == "SHA-512":
+        decrypt_SHA512(item, wordlist)
 
 def decrypt_MD5(item, wordlist):
     wordlist = open(wordlist, "r")
@@ -76,7 +85,7 @@ def decrypt_MD5(item, wordlist):
             print("- Trying: ", line, end='\r')
 
             if hashlib.md5(line.encode('utf-8')).hexdigest() == item:
-                print("[!] Success - cracked", item, " as ", line)
+                print("[+] Success - cracked", item, " as ", line)
                 sys.exit()
     except KeyboardInterrupt: # Stops python errors
         print("\nBye bye")
@@ -91,7 +100,7 @@ def decrypt_SHA1(item, wordlist):
             print("- Trying: ", line, end='\r')
 
             if hashlib.sha1(line.encode('utf-8')).hexdigest() == item:
-                print("[!] Success - cracked", item, " as ", line)
+                print("[+] Success - cracked", item, " as ", line)
                 sys.exit()
                 
     except KeyboardInterrupt: # Stops python errors
@@ -107,14 +116,14 @@ def decrypt_SHA256(item, wordlist):
             print("- Trying: ", line, end='\r')
 
             if hashlib.sha256(line.encode('utf-8')).hexdigest() == item:
-                print("[!] Success - cracked", item, " as ", line)
+                print("[+] Success - cracked", item, " as ", line)
                 sys.exit()
     except KeyboardInterrupt: # Stops python errors
         print("\nBye bye")
     
     print("\r\n\n[x] Failed to crack file")
 
-def decrypt_SHA251(item, wordlist):
+def decrypt_SHA512(item, wordlist):
     wordlist = open(wordlist, "r")
     try:
         for line in wordlist:
@@ -122,11 +131,13 @@ def decrypt_SHA251(item, wordlist):
             print("- Trying: ", line, end='\r')
 
             if hashlib.sha512(line.encode('utf-8')).hexdigest() == item:
-                print("[!] Success - cracked", item, "as", line)
+                print("[+] Success - cracked", item, "as", line)
                 sys.exit()
     except KeyboardInterrupt:
         print("\nBye bye")
 
     print("\r\n\n[x] Failed to crack file")
+
+print(logo)
 
 get_input()
